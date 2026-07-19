@@ -1,0 +1,18 @@
+# dependencies
+node_modules/
+
+# builds
+dist/
+.next/
+out/
+
+# env files (secrets) — keep only .env.example / .env.local.example tracked
+.env
+.env.local
+.env.production
+.env*.local
+
+# misc
+.DS_Store
+*.log
+*.tsbuildinfo
