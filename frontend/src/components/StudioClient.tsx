@@ -6,6 +6,7 @@ import { ApiError, generateImage, listGenerations, regenerateGeneration } from '
 import { GenerateForm } from './GenerateForm';
 import { GeneratingBanner } from './GeneratingBanner';
 import { Gallery } from './Gallery';
+import { ImageZoomModal } from './ImageZoomModal';
 
 interface StudioClientProps {
   initialGenerations: Generation[];
@@ -16,6 +17,7 @@ export function StudioClient({ initialGenerations }: StudioClientProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [editingFrom, setEditingFrom] = useState<Generation | null>(null);
+  const [zoomingGeneration, setZoomingGeneration] = useState<Generation | null>(null);
 
   const refreshGallery = async () => {
     try {
@@ -80,8 +82,12 @@ export function StudioClient({ initialGenerations }: StudioClientProps) {
 
       <section>
         <h2 className="mb-4 text-lg font-medium text-stone-900">Your Gallery</h2>
-        <Gallery generations={generations} onSelect={setEditingFrom} />
+        <Gallery generations={generations} onSelect={setEditingFrom} onZoom={setZoomingGeneration} />
       </section>
+
+      {zoomingGeneration && (
+        <ImageZoomModal generation={zoomingGeneration} onClose={() => setZoomingGeneration(null)} />
+      )}
     </main>
   );
 }

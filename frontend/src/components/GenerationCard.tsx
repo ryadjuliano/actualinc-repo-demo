@@ -4,6 +4,7 @@ import type { Generation } from '@/types/generation';
 interface GenerationCardProps {
   generation: Generation;
   onSelect: (generation: Generation) => void;
+  onZoom: (generation: Generation) => void;
 }
 
 // Explicit locale + timeZone (not `undefined`) so the string is identical
@@ -17,7 +18,7 @@ const formatTimestamp = (isoString: string) =>
     timeZone: 'UTC',
   });
 
-export function GenerationCard({ generation, onSelect }: GenerationCardProps) {
+export function GenerationCard({ generation, onSelect, onZoom }: GenerationCardProps) {
   return (
     <button
       type="button"
@@ -26,13 +27,34 @@ export function GenerationCard({ generation, onSelect }: GenerationCardProps) {
     >
       <div className="relative aspect-square w-full bg-stone-100">
         {generation.status === 'completed' && generation.image_url && (
-          <Image
-            src={generation.image_url}
-            alt={generation.prompt}
-            fill
-            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-            className="object-cover transition-transform group-hover:scale-105"
-          />
+          <>
+            <Image
+              src={generation.image_url}
+              alt={generation.prompt}
+              fill
+              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+              className="object-cover transition-transform group-hover:scale-105"
+            />
+            <span
+              role="button"
+              tabIndex={0}
+              onClick={(e) => {
+                e.stopPropagation();
+                onZoom(generation);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  onZoom(generation);
+                }
+              }}
+              className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100"
+              aria-label="Zoom image"
+            >
+              🔍
+            </span>
+          </>
         )}
         {generation.status === 'processing' && (
           <div className="flex h-full w-full animate-pulse items-center justify-center text-sm text-stone-400">
