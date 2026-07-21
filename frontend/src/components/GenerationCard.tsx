@@ -6,10 +6,15 @@ interface GenerationCardProps {
   onSelect: (generation: Generation) => void;
 }
 
+// Explicit locale + timeZone (not `undefined`) so the string is identical
+// whether it's rendered during SSR (server's locale/TZ) or during client
+// hydration (browser's locale/TZ) — otherwise a mismatch throws React's
+// hydration error #418.
 const formatTimestamp = (isoString: string) =>
-  new Date(isoString).toLocaleString(undefined, {
+  new Date(isoString).toLocaleString('en-US', {
     dateStyle: 'medium',
     timeStyle: 'short',
+    timeZone: 'UTC',
   });
 
 export function GenerationCard({ generation, onSelect }: GenerationCardProps) {
