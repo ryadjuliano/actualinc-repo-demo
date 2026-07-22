@@ -11,7 +11,11 @@ import type { GeneratedImage } from '../types/generation';
  * which underlying provider actually produced the image.
  */
 export const generateImage = async (finalPrompt: string): Promise<GeneratedImage> => {
-  if (env.POLLINATIONS_API_KEY) {
+  // Free mode uses the unauthenticated endpoint, so it must be attempted even
+  // when POLLINATIONS_API_KEY is unset — otherwise clearing the key silently
+  // disables the whole Pollinations path (free mode included) and forces every
+  // request onto Gemini.
+  if (env.POLLINATIONS_API_KEY || env.POLLINATIONS_FREE_MODE) {
     try {
       return await generateWithPollinations(finalPrompt);
     } catch (err) {
